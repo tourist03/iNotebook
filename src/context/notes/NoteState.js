@@ -114,7 +114,7 @@ const NoteState = (props) => {
       user: "66dd82ff4ad2533d15b0a8dc",
       title: title,
       description: description,
-      tags : tag,
+      tags: tag,
       date: "2024-09-09T11:47:41.090Z",
       __v: 0,
     };
@@ -123,7 +123,13 @@ const NoteState = (props) => {
   };
 
   //Delete Note
-  const deleteNote = () => {};
+  const deleteNote = (id) => {
+    console.log("Deleting the Note with Id" + id);
+    const newNotes = notes.filter((note) => {
+      return note._id !== id;
+    });
+    setNotes(newNotes)
+  };
 
   //Edit Note
 

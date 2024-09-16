@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
+import noteContext from "../context/notes/NoteContext";
 
 const NoteItem = (props) => {
+  const context = useContext(noteContext);
+  // eslint-disable-next-line
+  const { deleteNote } = context;
+
   const { note } = props;
   return (
     <div className="col-md-3">
@@ -11,6 +16,9 @@ const NoteItem = (props) => {
             <i
               className="fa-duotone fa-solid fa-trash-can mx-3"
               style={{ color: "#594fa1" }}
+              onClick={() => {
+                deleteNote(note._id);
+              }}
             ></i>
             <i
               className="fa-duotone fa-solid fa-user-pen mx-3"
