@@ -6,7 +6,7 @@ const NoteItem = (props) => {
   // eslint-disable-next-line
   const { deleteNote } = context;
 
-  const { note } = props;
+  const { note , updateNote } = props;
   return (
     <div className="col-md-3">
       <div className="card my-3">
@@ -23,6 +23,9 @@ const NoteItem = (props) => {
             <i
               className="fa-duotone fa-solid fa-user-pen mx-3"
               style={{ color: "#5021c0" }}
+              onClick={() => {
+                updateNote(note);
+              }}
             ></i>
           </div>
 
