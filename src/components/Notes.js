@@ -4,11 +4,13 @@ import NoteItem from "./NoteItem";
 import AddNote from "./AddNote";
 
 const Notes = () => {
-  const context = useContext(noteContext);
-  const { notes, getNotes } = context;
+  const { notes, getNotes } = useContext(noteContext);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     getNotes();
-  }, []);
+  }, []); // We're intentionally leaving this empty to mimic componentDidMount
+
   return (
     <>
       <AddNote />
