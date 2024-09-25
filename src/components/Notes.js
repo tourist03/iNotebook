@@ -4,7 +4,7 @@ import NoteItem from "./NoteItem";
 import AddNote from "./AddNote";
 
 const Notes = () => {
-  const { notes, getNotes } = useContext(noteContext);
+  const { notes, getNotes , editNote } = useContext(noteContext);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -12,36 +12,42 @@ const Notes = () => {
       try {
         await getNotes();
       } catch (err) {
+        console.error("Error fetching notes:", err);
         setError("Failed to fetch notes. Please try again later.");
       }
     };
+
     fetchNotes();
     // eslint-disable-next-line
   }, []);
 
+  const ref = useRef(null);
+  const refClose = useRef(null);
+  const context = useContext(noteContext);
+  // eslint-disable-next-line
+  const { addNote } = context;
+  const [note, setNote] = useState({
+    id: "",
+    etitle: "",
+    edescription: "",
+    etag: "",
+  });
+
   const updateNote = (currentNote) => {
     ref.current.click();
     setNote({
+      id: currentNote._id,
       etitle: currentNote.title,
       edescription: currentNote.description,
       etag: currentNote.tag,
     });
   };
 
-  const ref = useRef(null);
-
-  const context = useContext(noteContext);
-  // eslint-disable-next-line
-  const { addNote } = context;
-  const [note, setNote] = useState({
-    etitle: "",
-    edescription: "",
-    etag: "",
-  });
-
   const handleClick = (e) => {
     console.log("Updating Note", note);
     e.preventDefault();
+    editNote(note.id, note.etitle, note.edescription, note.etag);
+    refClose.current.click();
   };
   const onChange = (e) => {
     setNote({ ...note, [e.target.name]: e.target.value });
@@ -130,6 +136,7 @@ const Notes = () => {
             <div className="modal-footer">
               <button
                 type="button"
+                ref={refClose}
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
               >

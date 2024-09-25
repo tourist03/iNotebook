@@ -15,7 +15,9 @@ const NoteState = (props) => {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          'auth-token': localStorage.getItem('token')
+          "auth-token":
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjZkZDgyZmY0YWQyNTMzZDE1YjBhOGRjIn0sImlhdCI6MTcyNTc5NDcxNn0.Ta7sq19us8PZ-fVw969vOvNSXs4RMnAxf-d2Hp20g1g",
+      
         }
       });
 
@@ -73,10 +75,9 @@ const NoteState = (props) => {
   //Edit Note
 
   const editNote = async (id, title, description, tag) => {
-    //API Call
-
+    // API Call
     const response = await fetch(`${host}/api/notes/updatenote/${id}`, {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "auth-token":
@@ -84,20 +85,21 @@ const NoteState = (props) => {
       },
       body: JSON.stringify({ title, description, tag }),
     });
-    // eslint-disable-next-line
-    const json = response.json;
 
-
-    //Logic to edit in client
-    for (let index = 0; index < notes.length; index++) {
-      const element = notes[index];
-
-      if (element._id === id) {
-        element.title = title;
-        element.description = description;
-        element.tag = tag; // Changed from tags to tag
-      }
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const json = await response.json();
+    console.log(json);
+
+    // Create a new array with the updated note
+    const updatedNotes = notes.map(note => 
+      note._id === id ? { ...note, title, description, tag } : note
+    );
+
+    // Update the state with the new array
+    setNotes(updatedNotes);
   };
 
   return (
