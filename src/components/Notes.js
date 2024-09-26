@@ -4,7 +4,7 @@ import NoteItem from "./NoteItem";
 import AddNote from "./AddNote";
 
 const Notes = () => {
-  const { notes, getNotes , editNote } = useContext(noteContext);
+  const { notes, getNotes, editNote } = useContext(noteContext);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -101,6 +101,8 @@ const Notes = () => {
                     aria-describedby="emailHelp"
                     value={note.etitle}
                     onChange={onChange}
+                    minLength={5}
+                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -115,6 +117,8 @@ const Notes = () => {
                     name="edescription"
                     onChange={onChange}
                     value={note.edescription}
+                    minLength={5}
+                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -129,6 +133,8 @@ const Notes = () => {
                     name="etag"
                     value={note.etag}
                     onChange={onChange}
+                    minLength={5}
+                    required
                   />
                 </div>
               </form>
@@ -155,11 +161,17 @@ const Notes = () => {
       </div>
       <div className="row my-3">
         <h4>Your Notes</h4>
-        {notes.map((note) => {
-          return (
-            <NoteItem key={note._id} updateNote={updateNote} note={note} />
-          );
-        })}
+        {notes.length === 0 ? (
+          <div className="alert alert-danger">
+            No notes found. Create your first note!
+          </div>
+        ) : (
+          notes.map((note) => {
+            return (
+              <NoteItem key={note._id} updateNote={updateNote} note={note} />
+            );
+          })
+        )}
       </div>
     </>
   );
