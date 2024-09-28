@@ -2,23 +2,19 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import noteContext from "../context/notes/NoteContext";
 import NoteItem from "./NoteItem";
 import AddNote from "./AddNote";
+import { useNavigate } from "react-router-dom";
 
 const Notes = (props) => {
   const { notes, getNotes, editNote, deleteNote } = useContext(noteContext);
+  let history = useNavigate();
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchNotes = async () => {
-      try {
-        await getNotes();
-      } catch (err) {
-        console.error("Error fetching notes:", err);
-        setError("Failed to fetch notes. Please try again later.");
-      }
-    };
-
-    fetchNotes();
-    // eslint-disable-next-line
+    if (localStorage.getItem("token")) {
+      getNotes();
+    } else {
+      history ("/login");
+    }
   }, []);
 
   const ref = useRef(null);
@@ -170,10 +166,10 @@ const Notes = (props) => {
         ) : (
           notes.map((note) => {
             return (
-              <NoteItem 
-                key={note._id} 
-                updateNote={updateNote} 
-                note={note} 
+              <NoteItem
+                key={note._id}
+                updateNote={updateNote}
+                note={note}
                 deleteNote={deleteNote}
                 showAlert={props.showAlert}
               />
