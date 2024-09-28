@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const Login = (props) => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
   let navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       const response = await fetch("http://localhost:5001/api/auth/login", {
         method: "POST",
@@ -15,19 +16,18 @@ const Login = () => {
         },
         body: JSON.stringify(credentials),
       });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
       const json = await response.json();
       console.log(json);
       if (json.success) {
         localStorage.setItem("token", json.authToken);
-        navigate("/");  
+        props.showAlert("Logged in successfully", "success");
+        navigate("/");
       } else {
-        alert(json.error);
+        props.showAlert("Invalid credentials", "danger");
       }
     } catch (error) {
-      console.error("There was a problem with the fetch operation:", error);
+      console.error("Login error:", error);
+      props.showAlert("An error occurred while logging in", "danger");
     }
   };
 
