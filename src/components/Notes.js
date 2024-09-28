@@ -3,8 +3,8 @@ import noteContext from "../context/notes/NoteContext";
 import NoteItem from "./NoteItem";
 import AddNote from "./AddNote";
 
-const Notes = () => {
-  const { notes, getNotes, editNote } = useContext(noteContext);
+const Notes = (props) => {
+  const { notes, getNotes, editNote, deleteNote } = useContext(noteContext);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -48,14 +48,16 @@ const Notes = () => {
     e.preventDefault();
     editNote(note.id, note.etitle, note.edescription, note.etag);
     refClose.current.click();
+    props.showAlert("Note Updated Successfully", "success");
   };
+
   const onChange = (e) => {
     setNote({ ...note, [e.target.name]: e.target.value });
   };
 
   return (
     <>
-      <AddNote />
+      <AddNote showAlert={props.showAlert} />
       {error && <div className="alert alert-danger">{error}</div>}
       <button
         type="button"
@@ -168,7 +170,13 @@ const Notes = () => {
         ) : (
           notes.map((note) => {
             return (
-              <NoteItem key={note._id} updateNote={updateNote} note={note} />
+              <NoteItem 
+                key={note._id} 
+                updateNote={updateNote} 
+                note={note} 
+                deleteNote={deleteNote}
+                showAlert={props.showAlert}
+              />
             );
           })
         )}
