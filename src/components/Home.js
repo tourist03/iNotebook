@@ -1,10 +1,10 @@
-import Notes from "./Notes";
+import React from 'react';
+import Notes from './Notes';
 
-export const Home = () => {
-
+const Home = ({ showAlert }) => {
   return (
     <div>
-      <Notes/>
+      <Notes showAlert={showAlert} />
     </div>
   );
 };
