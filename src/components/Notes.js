@@ -6,17 +6,34 @@ import { useNavigate } from "react-router-dom";
 
 const Notes = (props) => {
   const { notes, getNotes, editNote, deleteNote } = useContext(noteContext);
-  let history = useNavigate();
+  let navigate = useNavigate();
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (localStorage.getItem("token")) {
-      getNotes();
-    } else {
-      history ("/login");
-    }
-  }, []);
+    const fetchNotes = async () => {
+      if (localStorage.getItem("token")) {
+        try {
+          await getNotes();
+          setError(null);
+        } catch (err) {
+          console.error("Error fetching notes:", err);
+          if (err.response && err.response.status === 401) {
+            setError("Your session has expired. Please log in again.");
+            localStorage.removeItem("token");
+            navigate("/login");
+          } else {
+            setError(
+              "An error occurred while fetching notes. Please try again."
+            );
+          }
+        }
+      } else {
+        navigate("/login");
+      }
+    };
 
+    fetchNotes();
+  }, [getNotes, navigate]);
   const ref = useRef(null);
   const refClose = useRef(null);
   const context = useContext(noteContext);
@@ -160,7 +177,7 @@ const Notes = (props) => {
       <div className="row my-3">
         <h4>Your Notes</h4>
         {notes.length === 0 ? (
-          <div className="alert alert-danger">
+          <div className="alert alert-info">
             No notes found. Create your first note!
           </div>
         ) : (

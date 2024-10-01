@@ -4,7 +4,7 @@ import NoteContext from "./NoteContext";
 const NoteState = (props) => {
   const host = "http://localhost:5001";
 
-  const notesInitial = []
+  const notesInitial = [];
 
   const [notes, setNotes] = useState(notesInitial);
 
@@ -12,13 +12,11 @@ const NoteState = (props) => {
   const getNotes = async () => {
     try {
       const response = await fetch(`${host}/api/notes/fetchallnotes`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          "auth-token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjZkZDgyZmY0YWQyNTMzZDE1YjBhOGRjIn0sImlhdCI6MTcyNTc5NDcxNn0.Ta7sq19us8PZ-fVw969vOvNSXs4RMnAxf-d2Hp20g1g",
-      
-        }
+          "Content-Type": "application/json",
+          "auth-token": localStorage.getItem("token"),
+        },
       });
 
       if (!response.ok) {
@@ -29,9 +27,9 @@ const NoteState = (props) => {
       setNotes(json);
     } catch (error) {
       console.error("Failed to fetch notes:", error);
-      // You might want to set an error state here or show a notification to the user
+      throw error; // Re-throw the error so it can be caught in the component
     }
-  }
+  };
 
   //Add Note
   const addNote = async (title, description, tag) => {
@@ -40,8 +38,7 @@ const NoteState = (props) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "auth-token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjZkZDgyZmY0YWQyNTMzZDE1YjBhOGRjIn0sImlhdCI6MTcyNTc5NDcxNn0.Ta7sq19us8PZ-fVw969vOvNSXs4RMnAxf-d2Hp20g1g",
+        "auth-token": localStorage.getItem("token"),
       },
       body: JSON.stringify({ title, description, tag }),
     });
@@ -50,19 +47,18 @@ const NoteState = (props) => {
   };
 
   //Delete Note
-  const deleteNote = async(id) => {
+  const deleteNote = async (id) => {
     const response = await fetch(`${host}/api/notes/deletenote/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
-        "auth-token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjZkZDgyZmY0YWQyNTMzZDE1YjBhOGRjIn0sImlhdCI6MTcyNTc5NDcxNn0.Ta7sq19us8PZ-fVw969vOvNSXs4RMnAxf-d2Hp20g1g",
+        "auth-token": localStorage.getItem("token"),
       },
     });
     // eslint-disable-next-line
     const json = response.json;
     console.log(json);
-    
+
     console.log("Deleting the Note with Id" + id);
     const newNotes = notes.filter((note) => {
       return note._id !== id;
@@ -78,8 +74,7 @@ const NoteState = (props) => {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        "auth-token":
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjZkZDgyZmY0YWQyNTMzZDE1YjBhOGRjIn0sImlhdCI6MTcyNTc5NDcxNn0.Ta7sq19us8PZ-fVw969vOvNSXs4RMnAxf-d2Hp20g1g",
+        "auth-token": localStorage.getItem("token"),
       },
       body: JSON.stringify({ title, description, tag }),
     });
@@ -92,7 +87,7 @@ const NoteState = (props) => {
     console.log(json);
 
     // Create a new array with the updated note
-    const updatedNotes = notes.map(note => 
+    const updatedNotes = notes.map((note) =>
       note._id === id ? { ...note, title, description, tag } : note
     );
 
@@ -101,7 +96,9 @@ const NoteState = (props) => {
   };
 
   return (
-    <NoteContext.Provider value={{ notes, addNote, deleteNote, editNote , getNotes}}>
+    <NoteContext.Provider
+      value={{ notes, addNote, deleteNote, editNote, getNotes }}
+    >
       {props.children}
     </NoteContext.Provider>
   );
